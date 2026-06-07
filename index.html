@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Tic-Tac-Toe Neo</title>
+    <title>Necromancy Grid: Skeleton vs Poison</title>
     <style>
         :root {
-            --bg-main: #0a0e17;
-            --bg-card: #131c2e;
-            --color-x: #00f0ff;
-            --color-o: #ff007f;
-            --text-main: #e2e8f0;
-            --text-dim: #64748b;
-            --neon-shadow-x: 0 0 15px rgba(0, 240, 255, 0.6);
-            --neon-shadow-o: 0 0 15px rgba(255, 0, 127, 0.6);
+            --bg-main: #0c0914;
+            --bg-card: #161224;
+            --color-skelly: #e2e8f0;
+            --color-poison: #39ff14;
+            --text-main: #cbd5e1;
+            --text-dim: #475569;
+            --neon-shadow-skelly: 0 0 15px rgba(226, 232, 240, 0.6);
+            --neon-shadow-poison: 0 0 15px rgba(57, 255, 20, 0.6);
         }
 
         body {
@@ -27,7 +27,7 @@
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 50%, #17223b 0%, #0a0e17 100%);
+            background-image: radial-gradient(circle at 50% 50%, #201535 0%, #0c0914 100%);
         }
 
         .container {
@@ -36,10 +36,10 @@
             align-items: center;
             gap: 20px;
             padding: 30px;
-            background: rgba(19, 28, 46, 0.8);
+            background: rgba(22, 18, 36, 0.8);
             border-radius: 20px;
-            border: 1px solid #233554;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid #31255a;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
             backdrop-filter: blur(10px);
         }
 
@@ -48,8 +48,9 @@
             font-size: 2.2rem;
             text-transform: uppercase;
             letter-spacing: 4px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
             text-align: center;
+            color: #a78bfa;
         }
 
         /* Dashboards & Controls */
@@ -76,9 +77,9 @@
         }
 
         select, .toggle-btn {
-            background: #1e2d4a;
+            background: #1f1936;
             color: var(--text-main);
-            border: 1px solid #3b537d;
+            border: 1px solid #3c2f6b;
             padding: 8px;
             border-radius: 5px;
             cursor: pointer;
@@ -88,24 +89,24 @@
         }
 
         select:hover, .toggle-btn:hover {
-            border-color: var(--color-x);
-            box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+            border-color: var(--color-skelly);
+            box-shadow: 0 0 8px rgba(226, 232, 240, 0.3);
         }
 
         .toggle-btn.active {
-            background: #ff005533;
-            border-color: var(--color-o);
-            color: #ff3399;
-            text-shadow: 0 0 5px var(--color-o);
+            background: rgba(57, 255, 20, 0.15);
+            border-color: var(--color-poison);
+            color: var(--color-poison);
+            text-shadow: 0 0 5px var(--color-poison);
         }
 
         .score-box {
-            background: #0d1527;
+            background: #110d21;
             padding: 10px 15px;
             border-radius: 8px;
             text-align: center;
             flex: 1;
-            border: 1px solid #1e2d4a;
+            border: 1px solid #281e47;
         }
 
         .score-box .num {
@@ -115,8 +116,8 @@
             margin-top: 5px;
         }
 
-        #score-x { color: var(--color-x); text-shadow: var(--neon-shadow-x); }
-        #score-o { color: var(--color-o); text-shadow: var(--neon-shadow-o); }
+        #score-skelly { color: var(--color-skelly); text-shadow: var(--neon-shadow-skelly); }
+        #score-poison { color: var(--color-poison); text-shadow: var(--neon-shadow-poison); }
 
         /* Match Status display */
         .status-display {
@@ -138,52 +139,47 @@
         }
 
         .node {
-            background: #101726;
-            border: 2px solid #233554;
+            background: #120e1f;
+            border: 2px solid #31255a;
             border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            font-weight: 900;
+            font-size: 2.8rem;
             position: relative;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            user-select: none;
         }
 
         .node:hover:not(.occupied) {
-            background: #17233c;
-            border-color: #4361ee;
-            box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+            background: #1b1530;
+            border-color: #7c3aed;
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
         }
 
         /* Node States */
-        .node.x-mark {
-            color: var(--color-x);
-            text-shadow: var(--neon-shadow-x);
-            border-color: var(--color-x);
-            box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2), var(--neon-shadow-x);
+        .node.skelly-mark {
+            border-color: var(--color-skelly);
+            box-shadow: inset 0 0 10px rgba(226, 232, 240, 0.2), var(--neon-shadow-skelly);
         }
 
-        .node.o-mark {
-            color: var(--color-o);
-            text-shadow: var(--neon-shadow-o);
-            border-color: var(--color-o);
-            box-shadow: inset 0 0 10px rgba(255, 0, 127, 0.2), var(--neon-shadow-o);
+        .node.poison-mark {
+            border-color: var(--color-poison);
+            box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.2), var(--neon-shadow-poison);
         }
 
         /* Decay Indicator Effect */
         .node.fading {
-            opacity: 0.4;
+            opacity: 0.3;
             animation: glitch 0.5s infinite alternate;
         }
 
         .node.winner-node {
-            background: #00ff6622 !important;
-            border-color: #00ff66 !important;
-            color: #00ff66 !important;
-            text-shadow: 0 0 15px #00ff66;
+            background: rgba(139, 92, 246, 0.2) !important;
+            border-color: #a78bfa !important;
+            box-shadow: 0 0 20px #8b5cf6;
         }
 
         /* Action Buttons */
@@ -197,7 +193,7 @@
             flex: 1;
             background: transparent;
             color: var(--text-main);
-            border: 2px solid #3b537d;
+            border: 2px solid #3c2f6b;
             padding: 12px;
             border-radius: 8px;
             cursor: pointer;
@@ -215,13 +211,13 @@
         }
 
         #reset-scores {
-            border-color: #551a1a;
-            color: #ff6b6b;
+            border-color: #581c1c;
+            color: #f87171;
         }
         #reset-scores:hover {
-            background: #ff6b6b;
+            background: #f87171;
             color: var(--bg-main);
-            box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
         }
 
         /* Screen shake logic on victory */
@@ -236,24 +232,24 @@
         }
 
         @keyframes glitch {
-            0% { filter: hue-rotate(0deg); opacity: 0.5; }
-            100% { filter: hue-rotate(45deg); opacity: 0.2; }
+            0% { filter: contrast(1); opacity: 0.4; }
+            100% { filter: contrast(1.5); opacity: 0.15; }
         }
     </style>
 </head>
 <body>
 
     <div class="container" id="app-container">
-        <h1>Quantum Grid</h1>
+        <h1>Necro Grid</h1>
 
         <!-- Settings Dashboard -->
         <div class="controls">
             <div class="control-group">
-                <label>System Mode</label>
+                <label>Opponent Ritual</label>
                 <select id="game-mode">
                     <option value="pvp">Local PvP</option>
-                    <option value="ai-easy">Neural Net: Easy AI</option>
-                    <option value="ai-hard">Neural Net: Hard AI</option>
+                    <option value="ai-easy">Voodoo AI: Easy</option>
+                    <option value="ai-hard">Voodoo AI: Hard</option>
                 </select>
             </div>
             <div class="control-group">
@@ -264,13 +260,13 @@
 
         <!-- Scoreboard Matrix -->
         <div class="scoreboard">
-            <div class="score-box">X Systems <span class="num" id="score-x">0</span></div>
+            <div class="score-box">💀 Hordes <span class="num" id="score-skelly">0</span></div>
             <div class="score-box">Ties <span class="num" id="score-ties">0</span></div>
-            <div class="score-box">O Systems <span class="num" id="score-o">0</span></div>
+            <div class="score-box">☠️ Toxins <span class="num" id="score-poison">0</span></div>
         </div>
 
         <!-- Terminal Output -->
-        <div class="status-display" id="status-term">Initializing Sync...</div>
+        <div class="status-display" id="status-term">Summoning Grid...</div>
 
         <!-- Main Node Matrix -->
         <div class="matrix-board" id="matrix-board">
@@ -287,8 +283,8 @@
 
         <!-- System Reset Hooks -->
         <div class="action-container">
-            <button class="btn-action" id="reset-board">Clear Matrix</button>
-            <button class="btn-action" id="reset-scores">Purge Data</button>
+            <button class="btn-action" id="reset-board">Purge Grid</button>
+            <button class="btn-action" id="reset-scores">Erase Lore</button>
         </div>
     </div>
 
@@ -300,18 +296,21 @@
         const modeSelect = document.getElementById('game-mode');
         const decayToggle = document.getElementById('decay-toggle');
         
-        const scoreXElem = document.getElementById('score-x');
-        const scoreOElem = document.getElementById('score-o');
+        const scoreSkellyElem = document.getElementById('score-skelly');
+        const scorePoisonElem = document.getElementById('score-poison');
         const scoreTiesElem = document.getElementById('score-ties');
 
+        // Internal engine mappings: "S" = Skeleton (💀), "P" = Poison (☠️)
+        const SKELLY = "💀";
+        const POISON = "☠️";
+
         let board = ["", "", "", "", "", "", "", "", ""];
-        let currentPlayer = "X"; 
+        let currentPlayer = SKELLY; 
         let isGameActive = true;
-        let scores = { X: 0, O: 0, ties: 0 };
+        let scores = { skelly: 0, poison: 0, ties: 0 };
         
-        // Quantum decay tracks arrays of indices for X and O to limit max 3 moves
         let decayMode = false;
-        let moveHistory = { X: [], O: [] };
+        let moveHistory = { [SKELLY]: [], [POISON]: [] };
 
         const winConditions = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -327,8 +326,8 @@
             if (!e.target.classList.contains('node') || !isGameActive) return;
             const idx = parseInt(e.target.dataset.idx);
             
-            if (board[idx] !== "") return; // Space occupied
-            if (currentPlayer === "O" && modeSelect.value.startsWith('ai')) return; // Block clicking during AI turn
+            if (board[idx] !== "") return; 
+            if (currentPlayer === POISON && modeSelect.value.startsWith('ai')) return; 
 
             executeMove(idx);
         });
@@ -343,17 +342,17 @@
 
         document.getElementById('reset-board').addEventListener('click', resetBoard);
         document.getElementById('reset-scores').addEventListener('click', () => {
-            scores = { X: 0, O: 0, ties: 0 };
-            scoreXElem.textContent = 0;
-            scoreOElem.textContent = 0;
+            scores = { skelly: 0, poison: 0, ties: 0 };
+            scoreSkellyElem.textContent = 0;
+            scorePoisonElem.textContent = 0;
             scoreTiesElem.textContent = 0;
             resetBoard();
         });
 
         function updateStatusDisplay() {
             if (isGameActive) {
-                statusTerm.textContent = `SYSTEM TURN: P${currentPlayer}`;
-                statusTerm.style.color = currentPlayer === 'X' ? 'var(--color-x)' : 'var(--color-o)';
+                statusTerm.textContent = `CURRENT TURN: ${currentPlayer}`;
+                statusTerm.style.color = currentPlayer === SKELLY ? 'var(--color-skelly)' : 'var(--color-poison)';
             }
         }
 
@@ -364,7 +363,7 @@
             // Render state
             const node = nodes[idx];
             node.textContent = currentPlayer;
-            node.classList.add(currentPlayer === 'X' ? 'x-mark' : 'o-mark', 'occupied');
+            node.classList.add(currentPlayer === SKELLY ? 'skelly-mark' : 'poison-mark', 'occupied');
 
             // Decay Mechanics Processing
             if (decayMode && moveHistory[currentPlayer].length > 3) {
@@ -377,7 +376,7 @@
             // Flag upcoming decay warning
             if (decayMode) {
                 nodes.forEach(n => n.classList.remove('fading'));
-                ['X', 'O'].forEach(p => {
+                [SKELLY, POISON].forEach(p => {
                     if (moveHistory[p].length === 3) {
                         nodes[moveHistory[p][0]].classList.add('fading');
                     }
@@ -411,21 +410,25 @@
             }
 
             // Rotate Player turn
-            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            currentPlayer = currentPlayer === SKELLY ? POISON : SKELLY;
             updateStatusDisplay();
 
             // AI Execution Branch
-            if (isGameActive && currentPlayer === "O" && modeSelect.value.startsWith('ai')) {
-                setTimeout(runAiLogic, 400); // Small processing lag delay for immersion
+            if (isGameActive && currentPlayer === POISON && modeSelect.value.startsWith('ai')) {
+                setTimeout(runAiLogic, 400); 
             }
         }
 
         function triggerVictory(combo) {
             isGameActive = false;
-            scores[currentPlayer]++;
-            document.getElementById(`score-${currentPlayer.toLowerCase()}`).textContent = scores[currentPlayer];
-            statusTerm.textContent = `CRITICAL: P${currentPlayer} SPLICES MATRIX!`;
-            statusTerm.style.color = '#00ff66';
+            const trackerKey = currentPlayer === SKELLY ? 'skelly' : 'poison';
+            scores[trackerKey]++;
+            
+            scoreSkellyElem.textContent = scores.skelly;
+            scorePoisonElem.textContent = scores.poison;
+            
+            statusTerm.textContent = `TRIUMPH: ${currentPlayer} REIGNS SUPREME!`;
+            statusTerm.style.color = '#a78bfa';
             
             combo.forEach(idx => nodes[idx].classList.add('winner-node'));
             
@@ -437,15 +440,15 @@
             isGameActive = false;
             scores.ties++;
             scoreTiesElem.textContent = scores.ties;
-            statusTerm.textContent = "MATRIX STALEMATE: TIE OVERRIDE";
+            statusTerm.textContent = "SOULS ENTANGLED: STALEMATE";
             statusTerm.style.color = "var(--text-dim)";
         }
 
         function resetBoard() {
             board = ["", "", "", "", "", "", "", "", ""];
-            currentPlayer = "X";
+            currentPlayer = SKELLY;
             isGameActive = true;
-            moveHistory = { X: [], O: [] };
+            moveHistory = { [SKELLY]: [], [POISON]: [] };
             updateStatusDisplay();
             nodes.forEach(node => {
                 node.textContent = "";
@@ -453,17 +456,15 @@
             });
         }
 
-        /* Neural Intelligence Processing Layer (AI Engine) */
+        /* Voodoo Intelligence Processing Layer (AI Engine) */
         function runAiLogic() {
             const currentMode = modeSelect.value;
             let targetIdx;
 
             if (currentMode === 'ai-easy' || decayMode) {
-                // Minimax breaks with Quantum decay mode parameters; fallback safely to randomized algorithms
                 let available = board.map((val, idx) => val === "" ? idx : null).filter(val => val !== null);
                 targetIdx = available[Math.floor(Math.random() * available.length)];
             } else {
-                // Smart minimax calculation
                 targetIdx = calculateBestMove();
             }
 
@@ -477,7 +478,7 @@
             let move;
             for (let i = 0; i < 9; i++) {
                 if (board[i] === "") {
-                    board[i] = "O";
+                    board[i] = POISON;
                     let score = minimax(board, 0, false);
                     board[i] = "";
                     if (score > bestScore) {
@@ -497,7 +498,7 @@
                 let bestScore = -Infinity;
                 for (let i = 0; i < 9; i++) {
                     if (currBoard[i] === "") {
-                        currBoard[i] = "O";
+                        currBoard[i] = POISON;
                         let score = minimax(currBoard, depth + 1, false);
                         currBoard[i] = "";
                         bestScore = Math.max(score, bestScore);
@@ -508,7 +509,7 @@
                 let bestScore = Infinity;
                 for (let i = 0; i < 9; i++) {
                     if (currBoard[i] === "") {
-                        currBoard[i] = "X";
+                        currBoard[i] = SKELLY;
                         let score = minimax(currBoard, depth + 1, true);
                         currBoard[i] = "";
                         bestScore = Math.min(score, bestScore);
@@ -521,8 +522,8 @@
         function evaluateBoardStateForAi() {
             for (let condition of winConditions) {
                 const [a, b, c] = condition;
-                if (board[a] === "O" && board[b] === "O" && board[c] === "O") return 10;
-                if (board[a] === "X" && board[b] === "X" && board[c] === "X") return -10;
+                if (board[a] === POISON && board[b] === POISON && board[c] === POISON) return 10;
+                if (board[a] === SKELLY && board[b] === SKELLY && board[c] === SKELLY) return -10;
             }
             if (!board.includes("")) return 0;
             return null;
